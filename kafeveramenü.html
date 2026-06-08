@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafe Vera</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C9A84C;--dark:#0A0804;}
+body{background:var(--dark);color:#fff;font-family:'Raleway',sans-serif;min-height:100vh;overflow-x:hidden}
+.site-bg{background:linear-gradient(135deg,#0A0804 0%,#1a1205 30%,#2a1d08 50%,#1a1205 70%,#0A0804 100%);min-height:100vh;display:flex;flex-direction:column;position:relative}
+.site-bg::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+header{position:relative;z-index:10;text-align:center;padding:3.5rem 2rem 2.5rem;border-bottom:1px solid rgba(201,168,76,0.2)}
+.logo-line{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:.5rem}
+.logo-line::before,.logo-line::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.logo-line::after{background:linear-gradient(90deg,var(--gold),transparent)}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.5rem);font-weight:300;letter-spacing:.3em;color:#fff;text-transform:uppercase}
+h1 span{color:var(--gold)}
+.tagline{font-size:.75rem;letter-spacing:.35em;color:rgba(201,168,76,0.7);font-family:'Raleway',sans-serif;font-weight:400;text-transform:uppercase;margin-top:.5rem}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,8,4,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.15);padding:0 1rem;display:flex;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:'Raleway',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:.9rem 1.1rem;cursor:pointer;transition:color .3s;white-space:nowrap;position:relative;flex-shrink:0}
+.nav-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--gold);transition:left .3s,right .3s}
+.nav-btn.active,.nav-btn:hover{color:var(--gold)}
+.nav-btn.active::after,.nav-btn:hover::after{left:8%;right:8%}
+main{position:relative;z-index:1;max-width:1100px;width:100%;margin:0 auto;padding:3rem 2rem 0;flex:1}
+.category-section{display:none;animation:fadeIn .4s ease}
+.category-section.visible{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cat-header{text-align:center;margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.15)}
+.cat-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;letter-spacing:.15em;color:#fff;text-transform:uppercase}
+.cat-subtitle{font-size:.7rem;letter-spacing:.3em;color:rgba(201,168,76,0.6);font-family:'Raleway',sans-serif;text-transform:uppercase;margin-top:.5rem}
+.gold-divider{display:flex;align-items:center;justify-content:center;gap:.8rem;margin:1rem auto}
+.gold-divider span{width:40px;height:1px;background:var(--gold);opacity:.5}
+.gold-divider i{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.7}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:rgba(201,168,76,0.1)}
+.menu-item{background:var(--dark);transition:background .3s;position:relative;overflow:hidden}
+.menu-item:hover{background:#0f0b04}
+.menu-item-body{padding:1.6rem 1.8rem}
+.item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.4rem}
+.item-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:500;color:#fff;letter-spacing:.03em;line-height:1.3}
+.item-price{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold);white-space:nowrap}
+.item-desc{font-size:.78rem;color:rgba(255,255,255,0.45);line-height:1.6;font-family:'Raleway',sans-serif}
+.empty-state{text-align:center;padding:5rem 2rem;color:rgba(255,255,255,0.25)}
+.empty-state p{font-size:.8rem;letter-spacing:.15em;text-transform:uppercase}
+
+/* LOADING */
+.loading-screen{position:fixed;inset:0;background:var(--dark);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.8rem;transition:opacity .5s}
+.loading-screen.hidden{opacity:0;pointer-events:none}
+.loading-text{font-size:.72rem;letter-spacing:.3em;color:rgba(201,168,76,0.5);text-transform:uppercase;font-family:'Raleway',sans-serif}
+.okey-wrap{position:relative;width:80px;height:80px}
+.okey-tile{width:52px;height:70px;background:linear-gradient(160deg,#f5efe0,#e8d9b8);border-radius:5px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 4px 16px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;animation:okeyFlip 1.4s ease-in-out infinite}
+.okey-tile-inner{font-size:1.6rem;font-weight:700;color:#C0392B;font-family:serif;line-height:1}
+@keyframes okeyFlip{
+  0%{transform:translate(-50%,-50%) rotateY(0deg) scale(1)}
+  25%{transform:translate(-50%,-50%) rotateY(90deg) scale(0.9)}
+  50%{transform:translate(-50%,-50%) rotateY(180deg) scale(1)}
+  75%{transform:translate(-50%,-50%) rotateY(270deg) scale(0.9)}
+  100%{transform:translate(-50%,-50%) rotateY(360deg) scale(1)}
+}
+.okey-glow{position:absolute;inset:-8px;border-radius:8px;background:radial-gradient(circle,rgba(201,168,76,0.15),transparent 70%);animation:okeyGlow 1.4s ease-in-out infinite}
+@keyframes okeyGlow{0%,100%{opacity:.4}50%{opacity:1}}
+
+footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-top:1px solid rgba(201,168,76,0.1);margin-top:3rem}
+.footer-text{color:rgba(255,255,255,0.2);font-size:.7rem;letter-spacing:.15em;font-family:'Raleway',sans-serif}
+.footer-location{display:block;margin:.4rem auto .2rem;font-size:.7rem;letter-spacing:.08em;color:rgba(201,168,76,0.55);text-decoration:none;transition:color .2s;font-family:'Raleway',sans-serif}
+.footer-location:hover{color:rgba(201,168,76,0.9)}
+.admin-open-btn{display:inline-block;margin:.8rem auto 1.5rem;background:transparent;border:none;color:rgba(255,255,255,0.12);font-family:'Raleway',sans-serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;padding:.3rem .8rem;cursor:pointer;transition:color .3s}
+.admin-open-btn:hover{color:rgba(201,168,76,0.5)}
+
+/* SAVING */
+.saving-indicator{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:rgba(10,8,4,0.97);border:1px solid rgba(201,168,76,0.35);color:rgba(201,168,76,0.9);font-size:.7rem;letter-spacing:.2em;padding:.6rem 1.8rem;z-index:10000;display:none;font-family:'Raleway',sans-serif;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+.saving-indicator.visible{display:flex;align-items:center;gap:.6rem}
+.saving-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:savePulse .7s ease infinite}
+@keyframes savePulse{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+.saving-indicator.done .saving-dot{animation:none;opacity:1;background:#5dbb7a}
+.saving-indicator.done{border-color:rgba(93,187,122,0.35);color:rgba(150,230,170,0.9)}
+
+/* LOGIN */
+.login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;align-items:center;justify-content:center}
+.login-overlay.open{display:flex}
+.login-box{background:linear-gradient(180deg,#0f0b04,#1a1205);border:1px solid rgba(201,168,76,0.25);width:90%;max-width:360px;padding:2.5rem;position:relative}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:300;color:var(--gold);letter-spacing:.15em;text-align:center;margin-bottom:.4rem}
+.login-sub{font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,0.25);text-transform:uppercase;text-align:center;margin-bottom:2rem;font-family:'Raleway',sans-serif}
+.login-label{display:block;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:.5rem;font-family:'Raleway',sans-serif}
+.login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);color:#fff;font-family:'Raleway',sans-serif;font-size:.9rem;padding:.7rem 1rem;outline:none;border-radius:1px;transition:border-color .2s;margin-bottom:1.2rem}
+.login-input:focus{border-color:rgba(201,168,76,0.5)}
+.login-btn{width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Raleway',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:.75rem;cursor:pointer;transition:all .2s}
+.login-btn:hover{background:var(--gold);color:var(--dark)}
+.login-err{font-size:.72rem;color:rgba(220,100,100,0.8);text-align:center;margin-top:.8rem;display:none;font-family:'Raleway',sans-serif}
+.login-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.2rem;cursor:pointer}
+
+/* ADMIN */
+.admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;overflow-y:auto}
+.admin-overlay.open{display:flex;flex-direction:column}
+.admin-panel{background:linear-gradient(180deg,#0f0b04,#1a1205);border:1px solid rgba(201,168,76,0.25);max-width:700px;width:90%;margin:2rem auto;border-radius:2px}
+.admin-header{padding:1.5rem 2rem;border-bottom:1px solid rgba(201,168,76,0.2);display:flex;justify-content:space-between;align-items:center}
+.admin-header h2{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--gold);letter-spacing:.1em}
+.admin-close{background:none;border:1px solid rgba(201,168,76,0.3);color:rgba(201,168,76,0.7);width:32px;height:32px;cursor:pointer;font-size:1rem;transition:all .2s}
+.admin-close:hover{background:rgba(201,168,76,0.1);color:var(--gold)}
+.admin-body{padding:2rem}
+.admin-tabs{display:flex;margin-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.15)}
+.admin-tab{background:none;border:none;color:rgba(255,255,255,0.4);font-family:'Raleway',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;padding:.7rem 1.2rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.admin-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.admin-tab-content{display:none}
+.admin-tab-content.active{display:block}
+.form-group{margin-bottom:1.2rem}
+.form-label{display:block;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:.5rem;font-family:'Raleway',sans-serif}
+.form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);color:#fff;font-family:'Raleway',sans-serif;font-size:.9rem;padding:.7rem 1rem;outline:none;transition:border-color .2s;border-radius:1px}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(201,168,76,0.5)}
+.form-select option{background:#1a1205;color:#fff}
+.form-textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-gold{background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Raleway',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:.7rem 2rem;cursor:pointer;transition:all .2s;width:100%;margin-top:.5rem}
+.btn-gold:hover{background:var(--gold);color:var(--dark)}
+.btn-sm{width:auto;padding:.4rem 1rem;font-size:.65rem}
+.btn-danger{border-color:rgba(255,80,80,0.5);color:rgba(255,80,80,0.7)}
+.btn-danger:hover{background:rgba(255,80,80,0.15);color:rgba(255,120,120,1)}
+.admin-list{display:flex;flex-direction:column;gap:.5rem;max-height:300px;overflow-y:auto}
+.admin-list-item{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);padding:.8rem 1rem;display:flex;align-items:center;gap:1rem}
+.admin-list-item-info{flex:1;min-width:0}
+.admin-list-item-name{font-size:.9rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Raleway',sans-serif}
+.admin-list-item-meta{font-size:.72rem;color:rgba(255,255,255,0.35);margin-top:.2rem;font-family:'Raleway',sans-serif}
+.admin-list-item-actions{display:flex;gap:.5rem;flex-shrink:0}
+.admin-msg{font-size:.75rem;padding:.5rem 1rem;border-radius:1px;margin-top:.8rem;text-align:center;display:none;font-family:'Raleway',sans-serif}
+.admin-msg.success{background:rgba(50,180,100,0.1);border:1px solid rgba(50,180,100,0.3);color:rgba(100,220,140,0.9)}
+.admin-msg.error{background:rgba(200,50,50,0.1);border:1px solid rgba(200,50,50,0.3);color:rgba(220,100,100,0.9)}
+.section-title{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid rgba(201,168,76,0.1);font-family:'Raleway',sans-serif}
+
+.drag-handle{font-size:1.1rem;color:rgba(201,168,76,0.4);cursor:grab;padding:0 .5rem;user-select:none;flex-shrink:0}
+.drag-handle:active{cursor:grabbing}
+.draggable{cursor:default;transition:opacity .2s,background .2s}
+.draggable.dragging{opacity:.4;background:rgba(201,168,76,0.08)}
+.draggable.drag-over{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.4)}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="okey-wrap">
+    <div class="okey-glow"></div>
+    <div class="okey-tile"><div class="okey-tile-inner">&#x2666;</div></div>
+  </div>
+  <div class="loading-text">Yükleniyor</div>
+</div>
+
+<!-- SAVING -->
+<div class="saving-indicator" id="savingIndicator">
+  <div class="saving-dot"></div>
+  <span id="savingText">Kaydediliyor</span>
+</div>
+
+<div class="site-bg">
+  <header>
+    <div class="logo-line"><h1>KAFE <span>VERA</span></h1></div>
+    <p class="tagline">M E N Ü</p>
+  </header>
+  <nav id="mainNav"></nav>
+  <main><div id="menuContent"></div></main>
+  <footer>
+    <p class="footer-text">KAFE VERA &nbsp;&mdash;&nbsp; Her Anı Bir Keyfe Dönüştürüyoruz</p>
+    <a class="footer-location" href="https://yandex.com.tr/maps/11503/ankara/house/silahtar_cad_no_38a/Z0sYfgZpT0EEQF1jfXV1cnlgYg==/" target="_blank" rel="noopener">Ankara, Yenimahalle, Emniyet Mah., Silahtar Cad., 38A</a>
+    <button class="admin-open-btn" id="adminOpenBtn">Yönetim Paneli</button>
+  </footer>
+</div>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <button class="login-close" id="loginClose">&#x2715;</button>
+    <div class="login-logo">KAFE VERA</div>
+    <div class="login-sub">Yönetim Paneli</div>
+    <label class="login-label">Şifre</label>
+    <input class="login-input" type="password" id="loginPass" placeholder="••••••••••••••••">
+    <button class="login-btn" id="loginBtn">Giriş Yap</button>
+    <div class="login-err" id="loginErr">Yanlış şifre. Tekrar deneyin.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <h2>Yönetim Paneli</h2>
+      <button class="admin-close" id="adminClose">&#x2715;</button>
+    </div>
+    <div class="admin-body">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="cats">Kategoriler</button>
+        <button class="admin-tab" data-tab="products">Ürün Ekle</button>
+        <button class="admin-tab" data-tab="edit">Düzenle</button>
+      </div>
+
+      <div class="admin-tab-content active" id="tab-cats">
+        <div class="form-group">
+          <label class="form-label">Kategori Adı</label>
+          <input class="form-input" id="catName" placeholder="örn. Sıcak İçecekler">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Alt Başlık (opsiyonel)</label>
+          <input class="form-input" id="catSub" placeholder="örn. Premium kahveler">
+        </div>
+        <button class="btn-gold" id="addCatBtn">Kategori Ekle</button>
+        <div class="admin-msg" id="catMsg"></div>
+        <div style="margin-top:1.5rem">
+          <div class="section-title">Mevcut Kategoriler</div>
+          <div class="admin-list" id="catList"></div>
+        </div>
+      </div>
+
+      <div class="admin-tab-content" id="tab-products">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select class="form-select" id="prodCat"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fiyat (TL)</label>
+            <input class="form-input" id="prodPrice" type="number" placeholder="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ürün Adı</label>
+          <input class="form-input" id="prodName" placeholder="örn. Filtre Kahve">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Açıklama (opsiyonel)</label>
+          <textarea class="form-textarea" id="prodDesc" placeholder="Ürün hakkında kısa bir bilgi..."></textarea>
+        </div>
+          <img class="img-preview" id="prodImgPreview">
+        </div>
+        <button class="btn-gold" id="addProdBtn">Ürün Ekle</button>
+        <div class="admin-msg" id="prodMsg"></div>
+      </div>
+
+      <div class="admin-tab-content" id="tab-edit">
+        <div class="form-group">
+          <label class="form-label">Kategori Seç</label>
+          <select class="form-select" id="editCatFilter" onchange="renderEditList()"></select>
+        </div>
+        <div class="section-title">Ürünler</div>
+        <div class="admin-list" id="editList"></div>
+        <div id="editForm" style="display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(201,168,76,0.15)">
+          <div class="section-title">Ürünü Düzenle</div>
+          <input type="hidden" id="editId">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ürün Adı</label>
+              <input class="form-input" id="editName">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fiyat (TL)</label>
+              <input class="form-input" id="editPrice" type="number">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Açıklama</label>
+            <textarea class="form-textarea" id="editDesc"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select class="form-select" id="editCat"></select>
+          </div>
+            <img class="img-preview" id="editImgPreview">
+          </div>
+          <button class="btn-gold" id="saveEditBtn">Değişiklikleri Kaydet</button>
+          <div class="admin-msg" id="editMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BIN_ID='6a24a10ff5f4af5e29c423c1';
+const API_KEY='$2a$10$Ohlo3aa2a5/HAw9ya09twOgTbQ4jt7uq8BdwgnnN4jn.C.ywMobHe';
+const BASE_URL=`https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const ADMIN_PASS='KafeVera2026Admin';
+
+let appData={categories:[],products:[]};
+let activeCategory=null;
+let isSaving=false;
+let savingTimer=null;
+
+async function loadData(){
+  try{
+    const res=await fetch(BASE_URL+'/latest',{headers:{'X-Master-Key':API_KEY}});
+    const json=await res.json();
+    return json.record||{categories:[],products:[]};
+  }catch(e){return{categories:[],products:[]}}
+}
+
+function showSaving(){
+  const ind=document.getElementById('savingIndicator');
+  const txt=document.getElementById('savingText');
+  if(savingTimer)clearTimeout(savingTimer);
+  ind.classList.remove('done');
+  txt.textContent='Kaydediliyor';
+  ind.classList.add('visible');
+}
+
+function showSaved(){
+  const ind=document.getElementById('savingIndicator');
+  const txt=document.getElementById('savingText');
+  ind.classList.add('done');
+  txt.textContent='Kaydedildi';
+  savingTimer=setTimeout(()=>ind.classList.remove('visible','done'),2000);
+}
+
+async function saveData(data){
+  if(isSaving)return;
+  isSaving=true;
+  showSaving();
+  try{
+    await fetch(BASE_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify(data)});
+  }catch(e){}
+  isSaving=false;
+  showSaved();
+}
+
+
+function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)}
+
+function renderNav(){
+  const nav=document.getElementById('mainNav');
+  nav.innerHTML='';
+  appData.categories.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-btn'+((!activeCategory&&i===0)||activeCategory===c.id?' active':'');
+    btn.textContent=c.name;
+    btn.onclick=()=>{activeCategory=c.id;renderNav();renderMenu()};
+    nav.appendChild(btn);
+  });
+}
+
+function renderMenu(){
+  const el=document.getElementById('menuContent');
+  el.innerHTML='';
+  if(!appData.categories.length){el.innerHTML='<div class="empty-state"><p>Henüz kategori eklenmemiş</p></div>';return}
+  const activeCat=activeCategory||appData.categories[0]?.id;
+  appData.categories.forEach(c=>{
+    const sec=document.createElement('div');
+    sec.className='category-section'+(c.id===activeCat?' visible':'');
+    const items=appData.products.filter(p=>p.catId===c.id);
+    sec.innerHTML=`
+      <div class="cat-header">
+        <div class="cat-title">${c.name}</div>
+        ${c.sub?`<div class="cat-subtitle">${c.sub}</div>`:''}
+        <div class="gold-divider"><span></span><i></i><span></span></div>
+      </div>
+      ${items.length?`<div class="menu-grid">${items.map(p=>`
+        <div class="menu-item">
+          
+          <div class="menu-item-body">
+            <div class="item-top"><div class="item-name">${p.name}</div><div class="item-price">${p.price} TL</div></div>
+            ${p.desc?`<div class="item-desc">${p.desc}</div>`:''}
+          </div>
+        </div>`).join('')}</div>`
+      :'<div class="empty-state"><p>Bu kategoride ürün yok</p></div>'}`;
+    el.appendChild(sec);
+  });
+}
+
+function renderCatList(){
+  const list=document.getElementById('catList');
+  list.innerHTML='';
+  if(!appData.categories.length){list.innerHTML='<div style="color:rgba(255,255,255,0.25);font-size:.78rem;padding:.5rem 0;font-family:Raleway,sans-serif">Henüz kategori yok</div>';return}
+  appData.categories.forEach((c,i)=>{
+    const item=document.createElement('div');
+    item.className='admin-list-item draggable';
+    item.setAttribute('draggable','true');
+    item.dataset.index=i;
+    item.innerHTML=`<div class="drag-handle" title="Sürükle">&#8597;</div><div class="admin-list-item-info"><div class="admin-list-item-name">${c.name}</div>${c.sub?`<div class="admin-list-item-meta">${c.sub}</div>`:''}</div><div class="admin-list-item-actions"><button class="btn-gold btn-sm btn-danger" onclick="deleteCategory('${c.id}')">Sil</button></div>`;
+    list.appendChild(item);
+  });
+  initDragDrop();
+}
+
+let dragSrc=null;
+function initDragDrop(){
+  const items=document.querySelectorAll('#catList .draggable');
+  items.forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      dragSrc=el;
+      setTimeout(()=>el.classList.add('dragging'),0);
+      e.dataTransfer.effectAllowed='move';
+    });
+    el.addEventListener('dragend',()=>{
+      el.classList.remove('dragging');
+      document.querySelectorAll('#catList .draggable').forEach(i=>i.classList.remove('drag-over'));
+    });
+    el.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      document.querySelectorAll('#catList .draggable').forEach(i=>i.classList.remove('drag-over'));
+      el.classList.add('drag-over');
+    });
+    el.addEventListener('drop',async e=>{
+      e.preventDefault();
+      if(dragSrc===el)return;
+      const fromIdx=parseInt(dragSrc.dataset.index);
+      const toIdx=parseInt(el.dataset.index);
+      const cats=[...appData.categories];
+      const [moved]=cats.splice(fromIdx,1);
+      cats.splice(toIdx,0,moved);
+      appData.categories=cats;
+      await saveData(appData);
+      renderAll();
+    });
+    // Touch support
+    el.addEventListener('touchstart',e=>{el._touchY=e.touches[0].clientY;el._touchIdx=parseInt(el.dataset.index)},{passive:true});
+    el.addEventListener('touchend',async e=>{
+      const endY=e.changedTouches[0].clientY;
+      const diff=endY-el._touchY;
+      const step=Math.round(diff/56);
+      if(step===0)return;
+      const from=el._touchIdx;
+      const to=Math.max(0,Math.min(appData.categories.length-1,from+step));
+      if(from===to)return;
+      const cats=[...appData.categories];
+      const [moved]=cats.splice(from,1);
+      cats.splice(to,0,moved);
+      appData.categories=cats;
+      await saveData(appData);
+      renderAll();
+    });
+  });
+}
+
+function renderProdCatSelect(){
+  ['prodCat','editCatFilter','editCat'].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    sel.innerHTML=appData.categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  });
+}
+
+function renderEditList(){
+  const catId=document.getElementById('editCatFilter').value;
+  const list=document.getElementById('editList');
+  const items=appData.products.filter(p=>p.catId===catId);
+  list.innerHTML='';
+  document.getElementById('editForm').style.display='none';
+  if(!items.length){list.innerHTML='<div style="color:rgba(255,255,255,0.25);font-size:.78rem;padding:.5rem 0;font-family:Raleway,sans-serif">Bu kategoride ürün yok</div>';return}
+  items.forEach(p=>{
+    const item=document.createElement('div');
+    item.className='admin-list-item';
+    item.innerHTML=`<div class="admin-list-item-info"><div class="admin-list-item-name">${p.name}</div><div class="admin-list-item-meta">${p.price} TL</div></div><div class="admin-list-item-actions"><button class="btn-gold btn-sm" onclick="openEdit('${p.id}')">Düzenle</button><button class="btn-gold btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Sil</button></div>`;
+    list.appendChild(item);
+  });
+}
+
+function openEdit(id){
+  const p=appData.products.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('editId').value=p.id;
+  document.getElementById('editName').value=p.name;
+  document.getElementById('editPrice').value=p.price;
+  document.getElementById('editDesc').value=p.desc||'';
+  document.getElementById('editCat').value=p.catId;
+  document.getElementById('editForm').style.display='block';
+  document.getElementById('editMsg').style.display='none';
+}
+window.openEdit=openEdit;
+
+function showMsg(id,msg,type){
+  const el=document.getElementById(id);el.textContent=msg;el.className='admin-msg '+type;el.style.display='block';
+  setTimeout(()=>el.style.display='none',2500);
+}
+
+async function addCategory(){
+  const name=document.getElementById('catName').value.trim();
+  if(!name){showMsg('catMsg','Kategori adı zorunlu','error');return}
+  const sub=document.getElementById('catSub').value.trim();
+  appData.categories.push({id:uid(),name,sub});
+  await saveData(appData);
+  document.getElementById('catName').value='';document.getElementById('catSub').value='';
+  renderAll();showMsg('catMsg','Kategori eklendi','success');
+}
+
+async function deleteCategory(id){
+  appData.categories=appData.categories.filter(c=>c.id!==id);
+  appData.products=appData.products.filter(p=>p.catId!==id);
+  if(activeCategory===id)activeCategory=null;
+  await saveData(appData);renderAll();
+}
+window.deleteCategory=deleteCategory;
+
+async function addProduct(){
+  const catId=document.getElementById('prodCat').value;
+  const name=document.getElementById('prodName').value.trim();
+  const price=parseFloat(document.getElementById('prodPrice').value)||0;
+  const desc=document.getElementById('prodDesc').value.trim();
+  if(!catId||!name){showMsg('prodMsg','Kategori ve ürün adı zorunlu','error');return}
+  appData.products.push({id:uid(),catId,name,price,desc});
+  await saveData(appData);
+  document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';
+  document.getElementById('prodDesc').value='';
+  renderAll();showMsg('prodMsg','Ürün eklendi','success');
+}
+
+async function deleteProduct(id){
+  appData.products=appData.products.filter(p=>p.id!==id);
+  await saveData(appData);renderEditList();renderMenu();
+}
+window.deleteProduct=deleteProduct;
+
+async function saveEdit(){
+  const id=document.getElementById('editId').value;
+  const p=appData.products.find(x=>x.id===id);
+  if(!p)return;
+  p.name=document.getElementById('editName').value.trim()||p.name;
+  p.price=parseFloat(document.getElementById('editPrice').value)||p.price;
+  p.desc=document.getElementById('editDesc').value.trim();
+  p.catId=document.getElementById('editCat').value;
+  await saveData(appData);renderEditList();renderMenu();showMsg('editMsg','Kaydedildi','success');
+}
+
+function renderAll(){
+  renderNav();renderMenu();renderCatList();renderProdCatSelect();renderEditList();
+}
+
+document.querySelectorAll('.admin-tab').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-content').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='edit'){renderProdCatSelect();renderEditList()}
+    if(btn.dataset.tab==='products')renderProdCatSelect();
+  }
+});
+
+document.getElementById('adminOpenBtn').onclick=()=>{
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('loginPass').focus(),100);
+};
+document.getElementById('loginClose').onclick=()=>document.getElementById('loginOverlay').classList.remove('open');
+document.getElementById('loginBtn').onclick=()=>{
+  if(document.getElementById('loginPass').value===ADMIN_PASS){
+    document.getElementById('loginOverlay').classList.remove('open');
+    document.getElementById('adminOverlay').classList.add('open');
+    renderProdCatSelect();renderCatList();
+  }else{
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('loginPass').value='';
+  }
+};
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()});
+document.getElementById('adminClose').onclick=()=>document.getElementById('adminOverlay').classList.remove('open');
+document.getElementById('addCatBtn').onclick=addCategory;
+document.getElementById('addProdBtn').onclick=addProduct;
+document.getElementById('saveEditBtn').onclick=saveEdit;
+window.renderEditList=renderEditList;
+
+(async()=>{
+  appData=await loadData();
+  document.getElementById('loadingScreen').classList.add('hidden');
+  renderAll();
+})();
+</script>
+</body>
+</html>
