@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kafe Vera</title>
+<title>Cafe Vera</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -20,7 +20,7 @@ h1 span{color:var(--gold)}
 .tagline{font-size:.75rem;letter-spacing:.35em;color:rgba(201,168,76,0.7);font-family:'Raleway',sans-serif;font-weight:400;text-transform:uppercase;margin-top:.5rem}
 nav{position:sticky;top:0;z-index:100;background:rgba(10,8,4,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.15);padding:0 1rem;display:flex;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 nav::-webkit-scrollbar{display:none}
-.nav-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:'Raleway',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;padding:.9rem 1.1rem;cursor:pointer;transition:color .3s;white-space:nowrap;position:relative;flex-shrink:0}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:'Raleway',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:1rem 1.3rem;cursor:pointer;transition:color .3s;white-space:nowrap;position:relative;flex-shrink:0}
 .nav-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--gold);transition:left .3s,right .3s}
 .nav-btn.active,.nav-btn:hover{color:var(--gold)}
 .nav-btn.active::after,.nav-btn:hover::after{left:8%;right:8%}
@@ -133,6 +133,11 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
 .draggable{cursor:default;transition:opacity .2s,background .2s}
 .draggable.dragging{opacity:.4;background:rgba(201,168,76,0.08)}
 .draggable.drag-over{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.4)}
+
+.sort-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.sort-btn{background:none;border:1px solid rgba(201,168,76,0.25);color:rgba(201,168,76,0.7);width:26px;height:22px;cursor:pointer;font-size:.55rem;line-height:1;transition:all .2s;padding:0}
+.sort-btn:hover:not(:disabled){background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.6);color:var(--gold)}
+.sort-btn-disabled{opacity:.2;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -154,13 +159,13 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
 
 <div class="site-bg">
   <header>
-    <div class="logo-line"><h1>KAFE <span>VERA</span></h1></div>
+    <div class="logo-line"><h1>CAFE <span>VERA</span></h1></div>
     <p class="tagline">M E N Ü</p>
   </header>
   <nav id="mainNav"></nav>
   <main><div id="menuContent"></div></main>
   <footer>
-    <p class="footer-text">KAFE VERA &nbsp;&mdash;&nbsp; Her Anı Bir Keyfe Dönüştürüyoruz</p>
+    <p class="footer-text">CAFE VERA &nbsp;&mdash;&nbsp; Her Anı Bir Keyfe Dönüştürüyoruz</p>
     <a class="footer-location" href="https://yandex.com.tr/maps/11503/ankara/house/silahtar_cad_no_38a/Z0sYfgZpT0EEQF1jfXV1cnlgYg==/" target="_blank" rel="noopener">Ankara, Yenimahalle, Emniyet Mah., Silahtar Cad., 38A</a>
     <button class="admin-open-btn" id="adminOpenBtn">Yönetim Paneli</button>
   </footer>
@@ -170,7 +175,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <button class="login-close" id="loginClose">&#x2715;</button>
-    <div class="login-logo">KAFE VERA</div>
+    <div class="login-logo">CAFE VERA</div>
     <div class="login-sub">Yönetim Paneli</div>
     <label class="login-label">Şifre</label>
     <input class="login-input" type="password" id="loginPass" placeholder="••••••••••••••••">
@@ -444,13 +449,37 @@ function renderEditList(){
   list.innerHTML='';
   document.getElementById('editForm').style.display='none';
   if(!items.length){list.innerHTML='<div style="color:rgba(255,255,255,0.25);font-size:.78rem;padding:.5rem 0;font-family:Raleway,sans-serif">Bu kategoride ürün yok</div>';return}
-  items.forEach(p=>{
+  items.forEach((p,i)=>{
     const item=document.createElement('div');
     item.className='admin-list-item';
-    item.innerHTML=`<div class="admin-list-item-info"><div class="admin-list-item-name">${p.name}</div><div class="admin-list-item-meta">${p.price} TL</div></div><div class="admin-list-item-actions"><button class="btn-gold btn-sm" onclick="openEdit('${p.id}')">Düzenle</button><button class="btn-gold btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Sil</button></div>`;
+    const isFirst=i===0;
+    const isLast=i===items.length-1;
+    item.innerHTML=`
+      <div class="sort-btns">
+        <button class="sort-btn${isFirst?' sort-btn-disabled':''}" onclick="moveProd('${p.id}','${catId}',-1)" ${isFirst?'disabled':''}>&#9650;</button>
+        <button class="sort-btn${isLast?' sort-btn-disabled':''}" onclick="moveProd('${p.id}','${catId}',1)" ${isLast?'disabled':''}>&#9660;</button>
+      </div>
+      <div class="admin-list-item-info"><div class="admin-list-item-name">${p.name}</div><div class="admin-list-item-meta">${p.price} TL</div></div>
+      <div class="admin-list-item-actions">
+        <button class="btn-gold btn-sm" onclick="openEdit('${p.id}')">Düzenle</button>
+        <button class="btn-gold btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Sil</button>
+      </div>`;
     list.appendChild(item);
   });
 }
+
+async function moveProd(id,catId,dir){
+  const catProds=appData.products.filter(p=>p.catId===catId);
+  const i=catProds.findIndex(p=>p.id===id);
+  const j=i+dir;
+  if(j<0||j>=catProds.length)return;
+  [catProds[i],catProds[j]]=[catProds[j],catProds[i]];
+  const others=appData.products.filter(p=>p.catId!==catId);
+  appData.products=[...others,...catProds];
+  await saveData(appData);
+  renderMenu();renderEditList();
+}
+window.moveProd=moveProd;
 
 function openEdit(id){
   const p=appData.products.find(x=>x.id===id);
@@ -496,9 +525,12 @@ async function addProduct(){
   if(!catId||!name){showMsg('prodMsg','Kategori ve ürün adı zorunlu','error');return}
   appData.products.push({id:uid(),catId,name,price,desc});
   await saveData(appData);
-  document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';
+  document.getElementById('prodName').value='';
+  document.getElementById('prodPrice').value='';
   document.getElementById('prodDesc').value='';
-  renderAll();showMsg('prodMsg','Ürün eklendi','success');
+  document.getElementById('prodName').focus();
+  renderMenu();renderCatList();
+  showMsg('prodMsg','Ürün eklendi','success');
 }
 
 async function deleteProduct(id){
