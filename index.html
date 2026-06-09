@@ -10,7 +10,7 @@
 :root{--gold:#C9A84C;--dark:#0A0804;}
 body{background:var(--dark);color:#fff;font-family:'Raleway',sans-serif;min-height:100vh;overflow-x:hidden}
 .site-bg{background:linear-gradient(135deg,#0A0804 0%,#1a1205 30%,#2a1d08 50%,#1a1205 70%,#0A0804 100%);min-height:100vh;display:flex;flex-direction:column;position:relative}
-.site-bg::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+.site-bg::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 50%);pointer-events:none;z-index:1}
 header{position:relative;z-index:10;text-align:center;padding:3.5rem 2rem 2.5rem;border-bottom:1px solid rgba(201,168,76,0.2)}
 .logo-line{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:.5rem}
 .logo-line::before,.logo-line::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
@@ -143,6 +143,8 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
 <body>
 
 <!-- LOADING -->
+
+<canvas id="particleCanvas" style="position:fixed;inset:0;z-index:2;pointer-events:none;"></canvas>
 <div class="loading-screen" id="loadingScreen">
   <div class="okey-wrap">
     <div class="okey-glow"></div>
@@ -594,6 +596,54 @@ window.renderEditList=renderEditList;
   document.getElementById('loadingScreen').classList.add('hidden');
   renderAll();
 })();
+
+// Particle background
+(function(){
+  const canvas=document.getElementById('particleCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[];
+  const COUNT=80;
+
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+  }
+  window.addEventListener('resize',resize);
+  resize();
+
+  function rand(min,max){return Math.random()*(max-min)+min;}
+
+  for(let i=0;i<COUNT;i++){
+    particles.push({
+      x:rand(0,W),y:rand(0,H),
+      r:rand(1.5,4),
+      vx:rand(-0.35,0.35),vy:rand(-0.35,0.35),
+      alpha:rand(0.25,0.7),
+      pulse:rand(0,Math.PI*2),
+      pulseSpeed:rand(0.01,0.03)
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.pulse+=p.pulseSpeed;
+      const a=p.alpha*(0.6+0.4*Math.sin(p.pulse));
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(201,168,76,${a})`;
+      ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<-5)p.x=W+5;
+      if(p.x>W+5)p.x=-5;
+      if(p.y<-5)p.y=H+5;
+      if(p.y>H+5)p.y=-5;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 </script>
 </body>
 </html>
