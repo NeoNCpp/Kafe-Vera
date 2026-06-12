@@ -115,6 +115,35 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
 .icon-opt{background:none;border:1px solid transparent;color:#fff;font-size:1.3rem;padding:.4rem;cursor:pointer;text-align:center;transition:all .2s}
 .icon-opt:hover{background:rgba(201,168,76,0.15)}
 .icon-opt.selected{background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.5)}
+
+.campaign-banner{
+  position:relative;z-index:3;
+  max-width:600px;margin:1.2rem auto 0;padding:0 .5rem;
+  display:none;
+}
+.campaign-banner.visible{display:block}
+.campaign-inner{
+  background:linear-gradient(90deg,rgba(201,168,76,0.12),rgba(201,168,76,0.2),rgba(201,168,76,0.12));
+  border:1px solid rgba(201,168,76,0.45);
+  padding:.75rem 1.2rem;
+  display:flex;align-items:center;gap:.8rem;
+  position:relative;overflow:hidden;
+  animation:campPulse 3s ease-in-out infinite;
+}
+.campaign-inner::before{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.15),transparent);
+  animation:campShine 3s ease-in-out infinite;
+}
+@keyframes campShine{0%{left:-100%}60%,100%{left:150%}}
+@keyframes campPulse{0%,100%{border-color:rgba(201,168,76,0.35)}50%{border-color:rgba(201,168,76,0.7)}}
+.campaign-star{font-size:1rem;flex-shrink:0;animation:campSpin 4s linear infinite}
+@keyframes campSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.campaign-text{
+  font-family:'Raleway',sans-serif;font-size:.82rem;font-weight:500;
+  color:#fff;letter-spacing:.06em;flex:1;line-height:1.4;
+}
+.campaign-text strong{color:var(--gold);font-weight:600;}
 </style>
 </head>
 <body>
@@ -139,6 +168,7 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
     <p class="tagline">M E N Ü</p>
   </header>
   <main>
+    <div id="campaignArea"></div>
     <div id="catGridHome"></div>
     <button class="menu-back" id="menuBack">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Kategoriler
@@ -176,6 +206,7 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
       <button class="admin-tab active" data-tab="cats">Kategoriler</button>
       <button class="admin-tab" data-tab="products">Ürün Ekle</button>
       <button class="admin-tab" data-tab="edit">Düzenle</button>
+      <button class="admin-tab" data-tab="campaign">Kampanya</button>
     </div>
 
     <div class="admin-tab-content active" id="tab-cats">
@@ -261,6 +292,18 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
         <div class="admin-msg" id="editProdMsg"></div>
       </div>
     </div>
+
+    <div class="admin-tab-content" id="tab-campaign">
+      <div class="form-group">
+        <label class="form-label">Kampanya Metni</label>
+        <textarea class="form-textarea" id="campaignText" placeholder="örn. Tüm kahvelerde bugüne özel %20 indirim!" style="min-height:80px"></textarea>
+      </div>
+      <p style="font-size:.68rem;color:rgba(255,255,255,0.3);margin-bottom:.8rem;letter-spacing:.05em">Kalın yazmak için metni **böyle** arasına alın. Boş bırakırsanız kampanya gizlenir.</p>
+      <button class="btn-gold" id="saveCampaignBtn">Kampanyayı Yayınla</button>
+      <button class="btn-gold" id="clearCampaignBtn" style="margin-top:.5rem;border-color:rgba(255,80,80,0.5);color:rgba(255,80,80,0.7)">Kampanyayı Kaldır</button>
+      <div class="admin-msg" id="campaignMsg"></div>
+    </div>
+
   </div>
 </div>
 
@@ -448,7 +491,15 @@ function renderEditList(){
   });
 }
 
-function renderAll(){renderCatGrid();renderCatList();renderProdCatSelect();renderEditList();}
+function renderCampaign(){
+  var area=document.getElementById('campaignArea');
+  var text=appData.campaign||'';
+  if(!text.trim()){area.innerHTML='';return;}
+  var formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  area.innerHTML='<div class="campaign-banner visible"><div class="campaign-inner"><div class="campaign-star">&#10022;</div><div class="campaign-text">'+formatted+'</div><div class="campaign-star">&#10022;</div></div></div>';
+}
+
+function renderAll(){renderCampaign();renderCatGrid();renderCatList();renderProdCatSelect();renderEditList();}
 
 function openCatEdit(id){
   var cat=appData.categories.find(function(x){return x.id===id;});
@@ -558,6 +609,22 @@ async function moveProd(id,catId,dir){
   await saveData(appData);renderMenu();renderEditList();
 }
 
+async function saveCampaign(){
+  var text=document.getElementById('campaignText').value.trim();
+  appData.campaign=text;
+  await saveData(appData);
+  renderCampaign();
+  showMsg('campaignMsg', text?'Kampanya yayınlandı':'Kampanya kaldırıldı','success');
+}
+
+async function clearCampaign(){
+  appData.campaign='';
+  document.getElementById('campaignText').value='';
+  await saveData(appData);
+  renderCampaign();
+  showMsg('campaignMsg','Kampanya kaldırıldı','success');
+}
+
 // Event Listeners
 document.getElementById('adminOpenBtn').onclick=function(){openModal('loginModal');setTimeout(function(){document.getElementById('loginPass').focus();},100);};
 document.getElementById('loginClose').onclick=function(){closeModal('loginModal');};
@@ -579,6 +646,8 @@ document.getElementById('addProdBtn').onclick=addProduct;
 document.getElementById('saveProdEditBtn').onclick=saveProdEdit;
 document.getElementById('saveCatBtn').onclick=saveCatEdit;
 document.getElementById('editCatFilter').onchange=renderEditList;
+document.getElementById('saveCampaignBtn').onclick=saveCampaign;
+document.getElementById('clearCampaignBtn').onclick=clearCampaign;
 
 document.querySelectorAll('.admin-tab').forEach(function(btn){
   btn.onclick=function(){
@@ -588,6 +657,7 @@ document.querySelectorAll('.admin-tab').forEach(function(btn){
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
     if(btn.dataset.tab==='edit'){renderProdCatSelect();renderEditList();}
     if(btn.dataset.tab==='products')renderProdCatSelect();
+    if(btn.dataset.tab==='campaign'){document.getElementById('campaignText').value=appData.campaign||'';}
   };
 });
 
