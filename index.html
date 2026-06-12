@@ -10,21 +10,94 @@
 :root{--gold:#C9A84C;--dark:#0A0804;}
 body{background:var(--dark);color:#fff;font-family:'Raleway',sans-serif;min-height:100vh;overflow-x:hidden}
 .site-bg{background:linear-gradient(135deg,#0A0804 0%,#1a1205 30%,#2a1d08 50%,#1a1205 70%,#0A0804 100%);min-height:100vh;display:flex;flex-direction:column;position:relative}
-.site-bg::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 50%);pointer-events:none;z-index:1}
-header{position:relative;z-index:10;text-align:center;padding:3.5rem 2rem 2.5rem;border-bottom:1px solid rgba(201,168,76,0.2)}
-.logo-line{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:.5rem}
+.site-bg::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+header{position:relative;z-index:10;text-align:center;padding:1.2rem 2rem 1rem;border-bottom:1px solid rgba(201,168,76,0.2)}
+.logo-line{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-bottom:.3rem}
 .logo-line::before,.logo-line::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
 .logo-line::after{background:linear-gradient(90deg,var(--gold),transparent)}
-h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,4.5rem);font-weight:300;letter-spacing:.3em;color:#fff;text-transform:uppercase}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,4.5rem);font-weight:300;letter-spacing:.3em;color:#fff;text-transform:uppercase;white-space:nowrap}
 h1 span{color:var(--gold)}
-.tagline{font-size:.75rem;letter-spacing:.35em;color:rgba(201,168,76,0.7);font-family:'Raleway',sans-serif;font-weight:400;text-transform:uppercase;margin-top:.5rem}
-nav{position:sticky;top:0;z-index:100;background:rgba(10,8,4,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.15);padding:0 1rem;display:flex;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-nav::-webkit-scrollbar{display:none}
-.nav-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:'Raleway',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:1rem 1.3rem;cursor:pointer;transition:color .3s;white-space:nowrap;position:relative;flex-shrink:0}
-.nav-btn::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;background:var(--gold);transition:left .3s,right .3s}
-.nav-btn.active,.nav-btn:hover{color:var(--gold)}
-.nav-btn.active::after,.nav-btn:hover::after{left:8%;right:8%}
-main{position:relative;z-index:1;max-width:1100px;width:100%;margin:0 auto;padding:3rem 2rem 0;flex:1}
+.tagline{font-size:.72rem;letter-spacing:.35em;color:rgba(201,168,76,0.7);font-family:'Raleway',sans-serif;font-weight:400;text-transform:uppercase;margin-top:.2rem}
+nav{display:none}
+.cat-grid-home{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem;
+  max-width:600px;
+  margin:3rem auto 0;
+  padding:0 1.5rem;
+}
+.cat-card{
+  position:relative;
+  aspect-ratio:1/1;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(201,168,76,0.2);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:.6rem;
+  cursor:pointer;
+  transition:all .35s ease;
+  overflow:hidden;
+  text-decoration:none;
+}
+.cat-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,168,76,0.07) 0%,transparent 70%);
+  opacity:0;transition:opacity .35s;
+}
+.cat-card::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.6),transparent);
+  opacity:0;transition:opacity .35s;
+}
+.cat-card:hover{
+  background:rgba(255,255,255,0.07);
+  border-color:rgba(201,168,76,0.5);
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(0,0,0,0.5);
+}
+.cat-card:hover::before,.cat-card:hover::after{opacity:1}
+.cat-card-icon{
+  width:2px;height:28px;
+  background:linear-gradient(180deg,transparent,var(--gold),transparent);
+  opacity:.6;
+}
+.cat-card-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(.9rem,3vw,1.15rem);
+  font-weight:400;
+  color:#fff;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  text-align:center;
+  padding:0 .5rem;
+  line-height:1.3;
+}
+.cat-card-sub{
+  font-family:'Raleway',sans-serif;
+  font-size:.6rem;
+  letter-spacing:.2em;
+  color:rgba(201,168,76,0.5);
+  text-transform:uppercase;
+  text-align:center;
+}
+/* Menu view back button */
+.menu-back{
+  display:none;
+  align-items:center;gap:.6rem;
+  background:none;border:none;
+  color:rgba(201,168,76,0.6);
+  font-family:'Raleway',sans-serif;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;padding:.5rem 0;
+  margin-bottom:2rem;
+  transition:color .2s;
+}
+.menu-back.visible{display:flex}
+.menu-back:hover{color:var(--gold)}
+.menu-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+main{position:relative;z-index:3;max-width:1100px;width:100%;margin:0 auto;padding:1.5rem 2rem 0;flex:1}
 .category-section{display:none;animation:fadeIn .4s ease}
 .category-section.visible{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -62,7 +135,7 @@ main{position:relative;z-index:1;max-width:1100px;width:100%;margin:0 auto;paddi
 .okey-glow{position:absolute;inset:-8px;border-radius:8px;background:radial-gradient(circle,rgba(201,168,76,0.15),transparent 70%);animation:okeyGlow 1.4s ease-in-out infinite}
 @keyframes okeyGlow{0%,100%{opacity:.4}50%{opacity:1}}
 
-footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-top:1px solid rgba(201,168,76,0.1);margin-top:3rem}
+footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-top:1px solid rgba(201,168,76,0.1);margin-top:3rem}
 .footer-text{color:rgba(255,255,255,0.2);font-size:.7rem;letter-spacing:.15em;font-family:'Raleway',sans-serif}
 .footer-location{display:block;margin:.4rem auto .2rem;font-size:.7rem;letter-spacing:.08em;color:rgba(201,168,76,0.55);text-decoration:none;transition:color .2s;font-family:'Raleway',sans-serif}
 .footer-location:hover{color:rgba(201,168,76,0.9)}
@@ -138,13 +211,38 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
 .sort-btn{background:none;border:1px solid rgba(201,168,76,0.25);color:rgba(201,168,76,0.7);width:26px;height:22px;cursor:pointer;font-size:.55rem;line-height:1;transition:all .2s;padding:0}
 .sort-btn:hover:not(:disabled){background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.6);color:var(--gold)}
 .sort-btn-disabled{opacity:.2;cursor:not-allowed}
+
+.icon-picker-wrap{position:relative}
+.icon-preview-btn{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);
+  color:#fff;font-family:'Raleway',sans-serif;font-size:1.1rem;padding:.6rem 1rem;
+  outline:none;border-radius:1px;cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:.8rem;transition:border-color .2s;
+}
+.icon-preview-btn:hover{border-color:rgba(201,168,76,0.5)}
+.icon-preview-label{font-size:.75rem;color:rgba(255,255,255,0.4);font-family:'Raleway',sans-serif}
+.icon-grid{
+  display:none;position:absolute;top:100%;left:0;right:0;z-index:1000;
+  background:#1a1205;border:1px solid rgba(201,168,76,0.25);
+  display:none;grid-template-columns:repeat(6,1fr);gap:2px;padding:.5rem;
+  max-height:220px;overflow-y:auto;
+}
+.icon-grid.open{display:grid}
+.icon-opt{
+  background:none;border:1px solid transparent;color:#fff;
+  font-size:1.3rem;padding:.4rem;cursor:pointer;text-align:center;
+  transition:all .2s;border-radius:2px;
+}
+.icon-opt:hover{background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.3)}
+.icon-opt.selected{background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.5)}
+.cat-card-icon-img{font-size:2rem;line-height:1;margin-bottom:.2rem}
 </style>
 </head>
 <body>
 
 <!-- LOADING -->
 
-<canvas id="particleCanvas" style="position:fixed;inset:0;z-index:2;pointer-events:none;"></canvas>
+<canvas id="particleCanvas" style="position:fixed;inset:0;z-index:1;pointer-events:none;"></canvas>
 <div class="loading-screen" id="loadingScreen">
   <div class="okey-wrap">
     <div class="okey-glow"></div>
@@ -165,7 +263,7 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
     <p class="tagline">M E N Ü</p>
   </header>
   <nav id="mainNav"></nav>
-  <main><div id="menuContent"></div></main>
+  <main><div id="catGridHome"></div><button class="menu-back" id="menuBack"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Kategoriler</button><div id="menuContent"></div></main>
   <footer>
     <p class="footer-text">CAFE VERA &nbsp;&mdash;&nbsp; Her Anı Bir Keyfe Dönüştürüyoruz</p>
     <a class="footer-location" href="https://yandex.com.tr/maps/11503/ankara/house/silahtar_cad_no_38a/Z0sYfgZpT0EEQF1jfXV1cnlgYg==/" target="_blank" rel="noopener">Ankara, Yenimahalle, Emniyet Mah., Silahtar Cad., 38A</a>
@@ -208,6 +306,17 @@ footer{position:relative;z-index:1;text-align:center;padding:2rem 2rem 0;border-
         <div class="form-group">
           <label class="form-label">Alt Başlık (opsiyonel)</label>
           <input class="form-input" id="catSub" placeholder="örn. Premium kahveler">
+        </div>
+        <div class="form-group">
+          <label class="form-label">İkon Seç (opsiyonel)</label>
+          <div class="icon-picker-wrap">
+            <button type="button" class="icon-preview-btn" id="iconPreviewBtn" onclick="toggleIconGrid()">
+              <span id="iconPreviewVal">—</span>
+              <span class="icon-preview-label">İkon seçmek için tıklayın</span>
+            </button>
+            <div class="icon-grid" id="iconGrid"></div>
+          </div>
+          <input type="hidden" id="catIcon">
         </div>
         <button class="btn-gold" id="addCatBtn">Kategori Ekle</button>
         <div class="admin-msg" id="catMsg"></div>
@@ -331,15 +440,36 @@ async function saveData(data){
 function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)}
 
 function renderNav(){
-  const nav=document.getElementById('mainNav');
-  nav.innerHTML='';
-  appData.categories.forEach((c,i)=>{
-    const btn=document.createElement('button');
-    btn.className='nav-btn'+((!activeCategory&&i===0)||activeCategory===c.id?' active':'');
-    btn.textContent=c.name;
-    btn.onclick=()=>{activeCategory=c.id;renderNav();renderMenu()};
-    nav.appendChild(btn);
+  // kept for compatibility
+}
+
+function renderCatGrid(){
+  const grid=document.getElementById('catGridHome');
+  const menuDiv=document.getElementById('menuContent');
+  const backBtn=document.getElementById('menuBack');
+  grid.innerHTML='';
+  if(!appData.categories.length){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><p>Henüz kategori eklenmemiş</p></div>';
+    return;
+  }
+  grid.className='cat-grid-home';
+  appData.categories.forEach(cat=>{
+    const card=document.createElement('div');
+    card.className='cat-card';
+    card.innerHTML=`${cat.icon?`<div class="cat-card-icon-img">${cat.icon}</div>`:'<div class="cat-card-icon"></div>'}<div class="cat-card-name">${cat.name}</div>${cat.sub?`<div class="cat-card-sub">${cat.sub}</div>`:''}`;
+    card.onclick=()=>{
+      activeCategory=cat.id;
+      grid.style.display='none';
+      backBtn.classList.add('visible');
+      renderMenu();
+    };
+    grid.appendChild(card);
   });
+  // Show grid, hide menu
+  grid.style.display='';
+  menuDiv.innerHTML='';
+  backBtn.classList.remove('visible');
+  activeCategory=null;
 }
 
 function renderMenu(){
@@ -374,75 +504,46 @@ function renderCatList(){
   const list=document.getElementById('catList');
   list.innerHTML='';
   if(!appData.categories.length){list.innerHTML='<div style="color:rgba(255,255,255,0.25);font-size:.78rem;padding:.5rem 0;font-family:Raleway,sans-serif">Henüz kategori yok</div>';return}
-  appData.categories.forEach((c,i)=>{
+  appData.categories.forEach((cat,i)=>{
     const item=document.createElement('div');
-    item.className='admin-list-item draggable';
-    item.setAttribute('draggable','true');
-    item.dataset.index=i;
-    item.innerHTML=`<div class="drag-handle" title="Sürükle">&#8597;</div><div class="admin-list-item-info"><div class="admin-list-item-name">${c.name}</div>${c.sub?`<div class="admin-list-item-meta">${c.sub}</div>`:''}</div><div class="admin-list-item-actions"><button class="btn-gold btn-sm btn-danger" onclick="deleteCategory('${c.id}')">Sil</button></div>`;
+    item.className='admin-list-item';
+    const isFirst=i===0;
+    const isLast=i===appData.categories.length-1;
+    item.innerHTML=`
+      <div class="sort-btns">
+        <button class="sort-btn${isFirst?' sort-btn-disabled':''}" onclick="moveCat('${cat.id}',-1)" ${isFirst?'disabled':''}>&#9650;</button>
+        <button class="sort-btn${isLast?' sort-btn-disabled':''}" onclick="moveCat('${cat.id}',1)" ${isLast?'disabled':''}>&#9660;</button>
+      </div>
+      ${cat.icon?`<div style="font-size:1.3rem;flex-shrink:0">${cat.icon}</div>`:''}
+      <div class="admin-list-item-info"><div class="admin-list-item-name">${cat.name}</div>${cat.sub?`<div class="admin-list-item-meta">${cat.sub}</div>`:''}</div>
+      <div class="admin-list-item-actions">
+        <button class="btn-gold btn-sm" onclick="changeCatIcon('${cat.id}')">İkon</button>
+        <button class="btn-gold btn-sm btn-danger" onclick="deleteCategory('${cat.id}')">Sil</button>
+      </div>`;
     list.appendChild(item);
   });
-  initDragDrop();
 }
 
-let dragSrc=null;
-function initDragDrop(){
-  const items=document.querySelectorAll('#catList .draggable');
-  items.forEach(el=>{
-    el.addEventListener('dragstart',e=>{
-      dragSrc=el;
-      setTimeout(()=>el.classList.add('dragging'),0);
-      e.dataTransfer.effectAllowed='move';
-    });
-    el.addEventListener('dragend',()=>{
-      el.classList.remove('dragging');
-      document.querySelectorAll('#catList .draggable').forEach(i=>i.classList.remove('drag-over'));
-    });
-    el.addEventListener('dragover',e=>{
-      e.preventDefault();
-      e.dataTransfer.dropEffect='move';
-      document.querySelectorAll('#catList .draggable').forEach(i=>i.classList.remove('drag-over'));
-      el.classList.add('drag-over');
-    });
-    el.addEventListener('drop',async e=>{
-      e.preventDefault();
-      if(dragSrc===el)return;
-      const fromIdx=parseInt(dragSrc.dataset.index);
-      const toIdx=parseInt(el.dataset.index);
-      const cats=[...appData.categories];
-      const [moved]=cats.splice(fromIdx,1);
-      cats.splice(toIdx,0,moved);
-      appData.categories=cats;
-      await saveData(appData);
-      renderAll();
-    });
-    // Touch support
-    el.addEventListener('touchstart',e=>{el._touchY=e.touches[0].clientY;el._touchIdx=parseInt(el.dataset.index)},{passive:true});
-    el.addEventListener('touchend',async e=>{
-      const endY=e.changedTouches[0].clientY;
-      const diff=endY-el._touchY;
-      const step=Math.round(diff/56);
-      if(step===0)return;
-      const from=el._touchIdx;
-      const to=Math.max(0,Math.min(appData.categories.length-1,from+step));
-      if(from===to)return;
-      const cats=[...appData.categories];
-      const [moved]=cats.splice(from,1);
-      cats.splice(to,0,moved);
-      appData.categories=cats;
-      await saveData(appData);
-      renderAll();
-    });
-  });
+async function moveCat(id,dir){
+  const i=appData.categories.findIndex(c=>c.id===id);
+  const j=i+dir;
+  if(j<0||j>=appData.categories.length)return;
+  [appData.categories[i],appData.categories[j]]=[appData.categories[j],appData.categories[i]];
+  await saveData(appData);
+  renderAll();
 }
+window.moveCat=moveCat;
 
-function renderProdCatSelect(){
-  ['prodCat','editCatFilter','editCat'].forEach(id=>{
-    const sel=document.getElementById(id);
-    if(!sel)return;
-    sel.innerHTML=appData.categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  });
+async function changeCatIcon(id){
+  const cat=appData.categories.find(x=>x.id===id);
+  if(!cat)return;
+  const ic=prompt('İkon girin (örn. ☕) veya boş bırakın:',cat.icon||'');
+  if(ic===null)return;
+  cat.icon=ic.trim();
+  await saveData(appData);
+  renderAll();
 }
+window.changeCatIcon=changeCatIcon;
 
 function renderEditList(){
   const catId=document.getElementById('editCatFilter').value;
@@ -483,113 +584,14 @@ async function moveProd(id,catId,dir){
 }
 window.moveProd=moveProd;
 
-function openEdit(id){
-  const p=appData.products.find(x=>x.id===id);
-  if(!p)return;
-  document.getElementById('editId').value=p.id;
-  document.getElementById('editName').value=p.name;
-  document.getElementById('editPrice').value=p.price;
-  document.getElementById('editDesc').value=p.desc||'';
-  document.getElementById('editCat').value=p.catId;
-  document.getElementById('editForm').style.display='block';
-  document.getElementById('editMsg').style.display='none';
-}
-window.openEdit=openEdit;
-
-function showMsg(id,msg,type){
-  const el=document.getElementById(id);el.textContent=msg;el.className='admin-msg '+type;el.style.display='block';
-  setTimeout(()=>el.style.display='none',2500);
-}
-
-async function addCategory(){
-  const name=document.getElementById('catName').value.trim();
-  if(!name){showMsg('catMsg','Kategori adı zorunlu','error');return}
-  const sub=document.getElementById('catSub').value.trim();
-  appData.categories.push({id:uid(),name,sub});
-  await saveData(appData);
-  document.getElementById('catName').value='';document.getElementById('catSub').value='';
-  renderAll();showMsg('catMsg','Kategori eklendi','success');
-}
-
-async function deleteCategory(id){
-  appData.categories=appData.categories.filter(c=>c.id!==id);
-  appData.products=appData.products.filter(p=>p.catId!==id);
-  if(activeCategory===id)activeCategory=null;
-  await saveData(appData);renderAll();
-}
-window.deleteCategory=deleteCategory;
-
-async function addProduct(){
-  const catId=document.getElementById('prodCat').value;
-  const name=document.getElementById('prodName').value.trim();
-  const price=parseFloat(document.getElementById('prodPrice').value)||0;
-  const desc=document.getElementById('prodDesc').value.trim();
-  if(!catId||!name){showMsg('prodMsg','Kategori ve ürün adı zorunlu','error');return}
-  appData.products.push({id:uid(),catId,name,price,desc});
-  await saveData(appData);
-  document.getElementById('prodName').value='';
-  document.getElementById('prodPrice').value='';
-  document.getElementById('prodDesc').value='';
-  document.getElementById('prodName').focus();
-  renderMenu();renderCatList();
-  showMsg('prodMsg','Ürün eklendi','success');
-}
-
-async function deleteProduct(id){
-  appData.products=appData.products.filter(p=>p.id!==id);
-  await saveData(appData);renderEditList();renderMenu();
-}
-window.deleteProduct=deleteProduct;
-
-async function saveEdit(){
-  const id=document.getElementById('editId').value;
-  const p=appData.products.find(x=>x.id===id);
-  if(!p)return;
-  p.name=document.getElementById('editName').value.trim()||p.name;
-  p.price=parseFloat(document.getElementById('editPrice').value)||p.price;
-  p.desc=document.getElementById('editDesc').value.trim();
-  p.catId=document.getElementById('editCat').value;
-  await saveData(appData);renderEditList();renderMenu();showMsg('editMsg','Kaydedildi','success');
-}
-
-function renderAll(){
-  renderNav();renderMenu();renderCatList();renderProdCatSelect();renderEditList();
-}
-
-document.querySelectorAll('.admin-tab').forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.admin-tab-content').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-    if(btn.dataset.tab==='edit'){renderProdCatSelect();renderEditList()}
-    if(btn.dataset.tab==='products')renderProdCatSelect();
-  }
-});
-
-document.getElementById('adminOpenBtn').onclick=()=>{
-  document.getElementById('loginPass').value='';
-  document.getElementById('loginErr').style.display='none';
-  document.getElementById('loginOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('loginPass').focus(),100);
-};
-document.getElementById('loginClose').onclick=()=>document.getElementById('loginOverlay').classList.remove('open');
-document.getElementById('loginBtn').onclick=()=>{
-  if(document.getElementById('loginPass').value===ADMIN_PASS){
-    document.getElementById('loginOverlay').classList.remove('open');
-    document.getElementById('adminOverlay').classList.add('open');
-    renderProdCatSelect();renderCatList();
-  }else{
-    document.getElementById('loginErr').style.display='block';
-    document.getElementById('loginPass').value='';
-  }
-};
-document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()});
-document.getElementById('adminClose').onclick=()=>document.getElementById('adminOverlay').classList.remove('open');
-document.getElementById('addCatBtn').onclick=addCategory;
-document.getElementById('addProdBtn').onclick=addProduct;
-document.getElementById('saveEditBtn').onclick=saveEdit;
 window.renderEditList=renderEditList;
+
+document.getElementById('menuBack').onclick=()=>{
+  document.getElementById('catGridHome').style.display='';
+  document.getElementById('menuContent').innerHTML='';
+  document.getElementById('menuBack').classList.remove('visible');
+  activeCategory=null;
+};
 
 (async()=>{
   appData=await loadData();
@@ -643,6 +645,49 @@ window.renderEditList=renderEditList;
   }
   draw();
 })();
+
+
+const ICONS=["☕", "🍵", "🧋", "🥤", "🍺", "🍷", "🍸", "🍹", "🧃", "🥛", "🍫", "🍰", "🎂", "🧁", "🍩", "🍪", "🥐", "🥖", "🥗", "🍕", "🍔", "🥪", "🌮", "🍜", "🥩", "🍣", "🥂", "🫖", "🍾", "🧊", "🫙", "🍡", "🍧", "🍨", "🍦", "🍭", "🍬", "🍮", "🫐", "🍓", "🍑", "🍋", "🍇", "🥝", "🌿", "🌸", "✨", "🕯️", "🎵", "🎶", "⭐", "💫", "🌙", "🔥", "❄️", "🌊", "🍂", "🌺", "🌻", "💎", "👑", "🏆"];
+
+function buildIconGrid(hiddenId,previewId,currentIcon){
+  const grid=document.getElementById('iconGrid');
+  if(!grid)return;
+  grid.innerHTML='';
+  ICONS.forEach(ic=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='icon-opt'+(ic===currentIcon?' selected':'');
+    btn.textContent=ic;
+    btn.onclick=()=>{
+      document.getElementById(hiddenId).value=ic;
+      document.getElementById(previewId).textContent=ic;
+      document.querySelectorAll('.icon-opt').forEach(o=>o.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('iconGrid').classList.remove('open');
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function toggleIconGrid(){
+  const grid=document.getElementById('iconGrid');
+  const current=document.getElementById('catIcon').value;
+  if(!grid.classList.contains('open')){
+    buildIconGrid('catIcon','iconPreviewVal',current);
+    grid.classList.add('open');
+  }else{
+    grid.classList.remove('open');
+  }
+}
+window.toggleIconGrid=toggleIconGrid;
+
+document.addEventListener('click',e=>{
+  const wrap=document.querySelector('.icon-picker-wrap');
+  if(wrap&&!wrap.contains(e.target)){
+    const grid=document.getElementById('iconGrid');
+    if(grid)grid.classList.remove('open');
+  }
+});
 
 </script>
 </body>
