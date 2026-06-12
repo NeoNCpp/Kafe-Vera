@@ -67,13 +67,13 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
 .saving-indicator.done .saving-dot{animation:none;background:#5dbb7a}
 .saving-indicator.done{border-color:rgba(93,187,122,0.35);color:rgba(150,230,170,0.9)}
 /* MODALS */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:flex-start;justify-content:center;overflow-y:auto;padding:1rem 0}
 .modal-overlay.open{display:flex}
-.modal-box{background:linear-gradient(180deg,#0f0b04,#1a1205);border:1px solid rgba(201,168,76,0.25);width:90%;max-width:420px;padding:2rem;position:relative}
+.modal-box{background:linear-gradient(180deg,#0f0b04,#1a1205);border:1px solid rgba(201,168,76,0.25);width:90%;max-width:420px;padding:2rem;position:relative;margin:auto}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;color:var(--gold);letter-spacing:.1em;margin-bottom:1.5rem}
 .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.2rem;cursor:pointer}
 /* ADMIN */
-.admin-panel-box{max-width:700px}
+.admin-panel-box{max-width:700px;max-height:90vh;overflow-y:auto}
 .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(201,168,76,0.2)}
 .admin-header h2{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--gold);letter-spacing:.1em}
 .admin-tabs{display:flex;margin-bottom:2rem;border-bottom:1px solid rgba(201,168,76,0.15)}
