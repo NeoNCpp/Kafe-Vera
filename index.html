@@ -126,25 +126,56 @@ footer{position:relative;z-index:5;text-align:center;padding:2rem 2rem 0;border-
 }
 .campaign-banner.visible{display:block}
 .campaign-inner{
-  background:linear-gradient(90deg,rgba(201,168,76,0.12),rgba(201,168,76,0.2),rgba(201,168,76,0.12));
-  border:1px solid rgba(201,168,76,0.45);
   padding:.9rem 1.5rem;
   display:flex;align-items:center;
   position:relative;overflow:hidden;
-  animation:campPulse 3s ease-in-out infinite;
+  background:linear-gradient(270deg,#1a0a2e,#0a1628,#0d2818,#1a1205,#1a0a2e);
+  background-size:400% 400%;
+  animation:rgbBg 6s ease infinite;
+  border-top:1px solid transparent;
+  border-bottom:1px solid transparent;
+  border-image:linear-gradient(90deg,#ff6ec7,#a78bfa,#60a5fa,#34d399,#fbbf24,#f87171,#ff6ec7) 1;
+  animation:rgbBg 6s ease infinite,rgbBorder 4s linear infinite;
 }
 .campaign-inner::before{
-  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.15),transparent);
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
   animation:campShine 3s ease-in-out infinite;
 }
-@keyframes campShine{0%{left:-100%}60%,100%{left:150%}}
-@keyframes campPulse{0%,100%{border-color:rgba(201,168,76,0.35)}50%{border-color:rgba(201,168,76,0.7)}}
-.campaign-text{
-  font-family:'Raleway',sans-serif;font-size:.85rem;font-weight:500;
-  color:#fff;letter-spacing:.06em;flex:1;line-height:1.5;text-align:center;
+.campaign-border{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,#ff6ec7,#a78bfa,#60a5fa,#34d399,#fbbf24,#f87171,#ff6ec7);
+  background-size:300% 100%;
+  animation:rgbBorder 3s linear infinite;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  padding:4px;
 }
-.campaign-text strong{color:var(--gold);font-weight:600;}
+@keyframes rgbBg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes rgbBorder{
+  0%{background-position:0% 50%}
+  100%{background-position:100% 50%}
+}
+@keyframes campShine{0%{left:-100%}60%,100%{left:150%}}
+.campaign-text{
+  font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:600;
+  color:#fff;letter-spacing:.08em;flex:1;line-height:1.5;text-align:center;
+  text-shadow:0 0 20px rgba(167,139,250,0.4);
+}
+.campaign-text strong{
+  background:linear-gradient(90deg,#fbbf24,#f472b6,#60a5fa,#34d399,#fbbf24);
+  background-size:300% 100%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:rgbBorder 3s linear infinite;
+  font-weight:700;
+}
 </style>
 </head>
 <body>
@@ -498,7 +529,7 @@ function renderCampaign(){
   var text=appData.campaign||'';
   if(!text.trim()){area.innerHTML='';return;}
   var formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-  area.innerHTML='<div class="campaign-banner visible"><div class="campaign-inner"><div class="campaign-text">'+formatted+'</div></div></div>';
+  area.innerHTML='<div class="campaign-banner visible"><div class="campaign-inner"><div class="campaign-border"></div><div class="campaign-text">'+formatted+'</div></div></div>';
 }
 
 function renderAll(){renderCampaign();renderCatGrid();renderCatList();renderProdCatSelect();renderEditList();}
